@@ -1,8 +1,9 @@
-header {
-  margin: 0px;
+.outter-card {
+  background-color: rgb(250, 250, 250);
+  margin-bottom: 1rem;
   padding: 12px;
-  border-radius: 12px;
-  box-shadow: rgba(17, 17, 26, 0.05) 0px 1px 0px, rgba(17, 17, 26, 0.1) 0px 0px 8px;
+  border-radius: 6px;
+  box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 24px 0px, rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
 }
 
 .selection_row {

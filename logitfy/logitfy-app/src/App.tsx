@@ -7,6 +7,35 @@ import { useDeferredValue, useMemo, useState } from "react";
 import { matchSorter } from "match-sorter";
 import { Combobox, ComboboxItem } from "./ui/combobox-multiple.js";
 import Submodule from './ui/selected-submodule.tsx';
+import { LoggingRequest, State } from './model.ts'
+import UiLoggingRequest from './ui/UiLoggingRequest.tsx';
+
+const arr: LoggingRequest[] = [
+  {
+    id: 'sdlkjsd',
+    rootRepository: 'swhddas',
+    state: State.Waiting,
+    startRef: 'sjkAAAdhd',
+    endRef: 'sdkdj',
+    submoduleNames: [],
+  },
+  {
+    id: 'sdlkjsd',
+    rootRepository: 'swhddas',
+    state: State.Running,
+    startRef: 'sjkdhd',
+    endRef: 'sdkdj',
+    submoduleNames: [],
+  },
+  {
+    id: 'sdlkjsd',
+    rootRepository: 'swhddas',
+    state: State.Finished,
+    startRef: 'sjkdhd',
+    endRef: 'sdkdj',
+    submoduleNames: [],
+  }
+]
 
 
 function App() {
@@ -14,6 +43,7 @@ function App() {
   const [value, setValue] = useState("");
   const [values, setValues] = useState<string[]>([]);
   const deferredValue = useDeferredValue(value);
+  const [loggingRequests, setLoggingRequests] = useState<LoggingRequest[]>(arr)
 
   const matches = useMemo(
     () => matchSorter(submoduleNames, deferredValue),
@@ -26,7 +56,7 @@ function App() {
 
   return (
     <>
-      <header>
+      <header className='outter-card'>
         <h1>LOGITFY - Changelog as a Service</h1>
         <h2>Select the root repository</h2>
         <div className='selection_row'>
@@ -70,6 +100,9 @@ function App() {
 
       <div>
 
+        {
+          loggingRequests.map((e) => <div className='outter-card'><UiLoggingRequest request={e} /></div>)
+        }
       </div>
 
 
