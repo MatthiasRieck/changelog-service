@@ -34,12 +34,22 @@ const arr: LoggingRequest[] = [
     startRef: 'sjkdhd',
     endRef: 'sdkdj',
     submoduleNames: [],
+  },
+  {
+    id: 'sdlkjsd',
+    rootRepository: 'swhddas',
+    state: State.Error,
+    startRef: 'sjkdhd',
+    endRef: 'sdkdj',
+    submoduleNames: [],
+    errorMessage: "Exception Occured",
+    stackTrace: "kdsd jksh jasd ah \nkldjskdjd\nkldjdjsa\nlds"
   }
 ]
 
 
 function App() {
-  const [submoduleNames, setSubmoduleNames] = useState<string[]>([])
+  const [submoduleNames, setSubmoduleNames] = useState<string[]>(['dksjd', 'sds', 'sad'])
   const [value, setValue] = useState("");
   const [values, setValues] = useState<string[]>([]);
   const deferredValue = useDeferredValue(value);
@@ -97,7 +107,6 @@ function App() {
           <Ariakit.Button className="button"><b>Submit</b></Ariakit.Button>
         </div>
       </header >
-
       <div>
 
         {

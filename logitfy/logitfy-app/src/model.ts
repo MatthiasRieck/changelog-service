@@ -2,6 +2,7 @@ export enum State {
     Waiting = "WAITING",
     Running = "RUNNING",
     Finished = "FINISHED",
+    Error = "ERROR",
 }
 
 export type LoggingRequest = {

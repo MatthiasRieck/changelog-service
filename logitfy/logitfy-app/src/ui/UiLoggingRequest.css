@@ -1,20 +1,40 @@
 .root_div {
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: 1rem;
+    justify-content: space-between;
 }
 
 code {
-    display: block;
+    white-space: pre;
 }
 
-.flex_one {
-    flex: 1;
+.error_message {
+    color: red;
+    margin-left: auto;
+    cursor: pointer;
 }
+
 
 .badge {
     font-size: small;
     padding: 2px 8px;
     border: 1px solid lightgray;
     border-radius: 20px;
+}
+
+.badge-error {
+    color: red;
+    border-color: red;
+}
+
+hr {
+    background-color: lightgray;
+    height: 1px;
+    border: 0;
+    margin: 12px 0;
+}
+
+.stacktrace {
+    color: red;
 }
