@@ -28,6 +28,11 @@ code {
     border-color: red;
 }
 
+.badge-success {
+    color: green;
+    border-color: green;
+}
+
 hr {
     background-color: lightgray;
     height: 1px;

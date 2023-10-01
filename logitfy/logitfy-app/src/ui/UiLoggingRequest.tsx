@@ -14,6 +14,16 @@ const UiLoggingRequest: FC<Props> = ({ request }) => {
         setShowStackTrace(!showStackTrace);
     }
 
+    let badge_class = ""
+
+    if (request.state === State.Error) {
+        badge_class = "badge-error"
+    }
+
+    if (request.state === State.Finished) {
+        badge_class = "badge-success"
+    }
+
     return (
         <>
             <div className='root_div'>
@@ -21,7 +31,7 @@ const UiLoggingRequest: FC<Props> = ({ request }) => {
                     {request.rootRepository} | <code>{request.startRef}</code> &rarr; <code>{request.endRef}</code>
                 </div>
                 <div className='error_message' onClick={handleErrorMessageClick}>{request.errorMessage}</div>
-                <div className={`badge ${request.state === "ERROR" ? "badge-error" : ""}`}>
+                <div className={`badge ${badge_class}`}>
                     {request.state}
                 </div>
             </div >
