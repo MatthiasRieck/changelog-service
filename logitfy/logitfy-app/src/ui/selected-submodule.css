@@ -18,8 +18,15 @@ svg {
     border: none;
 
     background-color: rgba(0 0 0 / 0.1);
-    color: red;
     border-radius: 20px;
     padding: 2px;
     margin: 0px;
+}
+
+.selected-submodule>button:hover {
+    background-color: rgba(0 0 0 / 0.2);
+}
+
+.selected-submodule>button:active {
+    background-color: rgba(0 0 0 / 0.3);
 }
