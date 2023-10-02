@@ -10,77 +10,30 @@ import Submodule from './ui/selected-submodule.tsx';
 import { LoggingRequest, State } from './model.ts'
 import UiLoggingRequest from './ui/UiLoggingRequest.tsx';
 
+import LoggingRequests from './LoggingRequests.tsx';
+
 import { useQuery } from 'react-query';
 
-const arr: LoggingRequest[] = [
-  {
-    id: 'sdlkdfgjsd',
-    rootRepository: 'swhddas',
-    state: State.Waiting,
-    startRef: 'sjkAAAdhd',
-    endRef: 'sdkdj',
-    submoduleNames: [],
-  },
-  {
-    id: 'sdlkhjhgjsd',
-    rootRepository: 'swhddas',
-    state: State.Running,
-    startRef: 'sjkdhd',
-    endRef: 'sdkdj',
-    submoduleNames: [],
-  },
-  {
-    id: 'sdlksdfsfjsd',
-    rootRepository: 'swhddas',
-    state: State.Finished,
-    startRef: 'sjkdhd',
-    endRef: 'sdkdj',
-    submoduleNames: [],
-  },
-  {
-    id: 'sdlkjghfghsd',
-    rootRepository: 'swhddas',
-    state: State.Error,
-    startRef: 'sjkdhd',
-    endRef: 'sdkdj',
-    submoduleNames: [],
-    errorMessage: "Exception Occured",
-    stackTrace: "kdsd jksh jasd ah \nkldjskdjd\nkldjdjsa\nlds"
-  }
-]
-
-function getLoggingRequests() {
-
-  return arr;
-}
-
-
-function LoggingRequests() {
-  const { isLoading, isError, data, error: str } = useQuery(['requests'], getLoggingRequests);
-
-  if (isLoading) {
-    return <span>Loading...</span>
-  }
-
-  if (isError) {
-    return <span>Error: {error.message}</span>
-  }
-
-  console.log(data)
-
-  return <div>
-    {
-      data.map((e) => <div className='outter-card' key={`card-${e.id}`}><UiLoggingRequest request={e} /></div>)
-    }
-  </div >
-}
-
+const get_submodule_names = async (rootRepo) => {
+  const res = await fetch(`http://127.0.0.1:8000/repoSubmodules/${rootRepo}`)
+  return res.json();
+};
 
 function App() {
+  const [rootRepo, setRootRepo] = useState<string>("")
   const [submoduleNames, setSubmoduleNames] = useState<string[]>(['dksjd', 'sds', 'sad'])
   const [value, setValue] = useState("");
   const [values, setValues] = useState<string[]>([]);
   const deferredValue = useDeferredValue(value);
+  const { data: availableSubmoduleData, refetch: refetchAvailableSubmoduleData } = useQuery(
+    ["availableSubmodules", rootRepo],
+    () => get_submodule_names(rootRepo),
+    {
+      enabled: false,
+    }
+  )
+
+  console.log(availableSubmoduleData)
 
 
   const matches = useMemo(
@@ -92,9 +45,14 @@ function App() {
     setValues(values.filter((x) => x != value))
   }
 
+  const onSelectRootRepoClick = () => {
+    console.log('SELECT ROOT')
+    refetchAvailableSubmoduleData();
+  };
 
-
-
+  const onRootRepoNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setRootRepo(e.target.value);
+  }
 
   return (
     <>
@@ -102,8 +60,8 @@ function App() {
         <h1>LOGITFY - Changelog as a Service</h1>
         <h2>Select the root repository</h2>
         <div className='selection_row'>
-          <input className='input' placeholder='owner/repo'></input>
-          <Ariakit.Button className="button">Select Root Repository</Ariakit.Button>
+          <input className='input' placeholder='owner/repo' onChange={onRootRepoNameChange}></input>
+          <Ariakit.Button className="button" onClick={onSelectRootRepoClick}>Get Submodules for "{rootRepo}"</Ariakit.Button>
         </div>
         {
           submoduleNames.length > 0 &&
