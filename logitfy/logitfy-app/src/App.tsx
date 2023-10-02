@@ -10,9 +10,11 @@ import Submodule from './ui/selected-submodule.tsx';
 import { LoggingRequest, State } from './model.ts'
 import UiLoggingRequest from './ui/UiLoggingRequest.tsx';
 
+import { useQuery } from 'react-query';
+
 const arr: LoggingRequest[] = [
   {
-    id: 'sdlkjsd',
+    id: 'sdlkdfgjsd',
     rootRepository: 'swhddas',
     state: State.Waiting,
     startRef: 'sjkAAAdhd',
@@ -20,7 +22,7 @@ const arr: LoggingRequest[] = [
     submoduleNames: [],
   },
   {
-    id: 'sdlkjsd',
+    id: 'sdlkhjhgjsd',
     rootRepository: 'swhddas',
     state: State.Running,
     startRef: 'sjkdhd',
@@ -28,7 +30,7 @@ const arr: LoggingRequest[] = [
     submoduleNames: [],
   },
   {
-    id: 'sdlkjsd',
+    id: 'sdlksdfsfjsd',
     rootRepository: 'swhddas',
     state: State.Finished,
     startRef: 'sjkdhd',
@@ -36,7 +38,7 @@ const arr: LoggingRequest[] = [
     submoduleNames: [],
   },
   {
-    id: 'sdlkjsd',
+    id: 'sdlkjghfghsd',
     rootRepository: 'swhddas',
     state: State.Error,
     startRef: 'sjkdhd',
@@ -47,13 +49,39 @@ const arr: LoggingRequest[] = [
   }
 ]
 
+function getLoggingRequests() {
+
+  return arr;
+}
+
+
+function LoggingRequests() {
+  const { isLoading, isError, data, error: str } = useQuery(['requests'], getLoggingRequests);
+
+  if (isLoading) {
+    return <span>Loading...</span>
+  }
+
+  if (isError) {
+    return <span>Error: {error.message}</span>
+  }
+
+  console.log(data)
+
+  return <div>
+    {
+      data.map((e) => <div className='outter-card' key={`card-${e.id}`}><UiLoggingRequest request={e} /></div>)
+    }
+  </div >
+}
+
 
 function App() {
   const [submoduleNames, setSubmoduleNames] = useState<string[]>(['dksjd', 'sds', 'sad'])
   const [value, setValue] = useState("");
   const [values, setValues] = useState<string[]>([]);
   const deferredValue = useDeferredValue(value);
-  const [loggingRequests, setLoggingRequests] = useState<LoggingRequest[]>(arr)
+
 
   const matches = useMemo(
     () => matchSorter(submoduleNames, deferredValue),
@@ -63,6 +91,10 @@ function App() {
   function onSubmoduleClick(value: string) {
     setValues(values.filter((x) => x != value))
   }
+
+
+
+
 
   return (
     <>
@@ -107,12 +139,7 @@ function App() {
           <Ariakit.Button className="button"><b>Submit</b></Ariakit.Button>
         </div>
       </header >
-      <div>
-
-        {
-          loggingRequests.map((e) => <div className='outter-card'><UiLoggingRequest request={e} /></div>)
-        }
-      </div>
+      <LoggingRequests />
 
 
     </>
