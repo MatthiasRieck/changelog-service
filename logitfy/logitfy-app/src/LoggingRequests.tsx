@@ -1,30 +1,40 @@
-import React from 'react'
 import UiLoggingRequest from './ui/UiLoggingRequest.tsx';
 
 import { useQuery } from 'react-query';
+import { LoggingRequest } from './model.ts';
 
 async function getLoggingRequests() {
-    const res = await fetch("http://127.0.0.1:8000/loggingRequests")
+    try {
+        const res = await fetch("http://127.0.0.1:8000/loggingRequests");
 
-    return res.json();
+        if (!res.ok) {
+            throw new Error(`HTTP error! status: ${res.status}`);
+        }
+
+        return res.json();
+    } catch (error) {
+        console.error(error);
+        throw new Error("Failed to fetch logging requests");
+    }
 }
 
 function LoggingRequests() {
-    const { isLoading, isError, data, error: str } = useQuery(['requests'], getLoggingRequests);
+    const query = useQuery(['requests'], getLoggingRequests);
 
-    if (isLoading) {
+    if (query.isLoading) {
         return <span>Loading...</span>
     }
 
-    if (isError) {
-        return <span>Error: {error.message}</span>
+    if (query.isError && query.error instanceof Error) {
+        return <span>Error: {query.error.message}</span>
     }
-
-    console.log(data)
-
     return <div>
         {
-            data.map((e) => <div className='outter-card' key={`card-${e.id}`}><UiLoggingRequest request={e} /></div>)
+            query.data.map(
+                (e: LoggingRequest) => <div className='outter-card' key={`card-${e.id}`}>
+                    <UiLoggingRequest request={e} />
+                </div>
+            )
         }
     </div >
 }
