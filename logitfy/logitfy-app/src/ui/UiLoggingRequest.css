@@ -43,3 +43,8 @@ hr {
 .stacktrace {
     color: red;
 }
+
+.submodules {
+    font-size: small;
+    color: gray;
+}

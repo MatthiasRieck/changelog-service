@@ -1,9 +1,11 @@
-from typing import List, Optional
+from collections.abc import Callable, Iterable, Mapping
+from typing import Any, List, Optional
 from enum import Enum
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
+import uuid
 
 from humps.camel import case
 
@@ -19,15 +21,19 @@ class State(str, Enum):
     Error = "ERROR"
 
 
+def create_uuid() -> str:
+    return str(uuid.uuid4())
+
+
 class LoggingRequest(BaseModel):
-    id: str
+    id: str = Field(default_factory=create_uuid)
     root_repository: str
     submodule_names: List[str]
     start_ref: str
     end_ref: str
     json_uri: Optional[str] = None
     html_uri: Optional[str] = None
-    state: State
+    state: State = State.Waiting
     error_message: Optional[str] = None
     stack_trace: Optional[str] = None
 
@@ -52,22 +58,11 @@ app.add_middleware(
 )
 
 
-
 logging_requests = []
-
 
 @app.get('/loggingRequests/')
 def get_logging_requests() -> List[LoggingRequest]:
-    return [
-        LoggingRequest(
-            id="myid",
-            root_repository="root_repo",
-            submodule_names=["sub_names"],
-            start_ref="start",
-            end_ref="end",
-            state=State.Finished,
-        )
-    ]
+    return logging_requests   
 
 @app.get('/repoSubmodules/{owner}/{repo}/')
 def get_repo_submodules(owner: str, repo: str) -> List[str]:
@@ -75,4 +70,6 @@ def get_repo_submodules(owner: str, repo: str) -> List[str]:
 
 @app.post('/addNewRequest/')
 def add_new_request(request: LoggingRequest):
+
     logging_requests.append(request)
+

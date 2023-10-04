@@ -30,7 +30,7 @@ function LoggingRequests() {
     }
     return <div>
         {
-            query.data.map(
+            query.data.slice().reverse().map(
                 (e: LoggingRequest) => <div className='outter-card' key={`card-${e.id}`}>
                     <UiLoggingRequest request={e} />
                 </div>
