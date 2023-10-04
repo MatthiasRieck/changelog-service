@@ -36,6 +36,12 @@ const UiLoggingRequest: FC<Props> = ({ request }) => {
                 </div>
             </div >
             {
+                request.submoduleNames.length > 0 &&
+                <div className='submodules'>
+                    {request.submoduleNames.join(', ')}
+                </div>
+            }
+            {
                 (request.stackTrace && showStackTrace) &&
                 <div>
                     <hr></hr>
