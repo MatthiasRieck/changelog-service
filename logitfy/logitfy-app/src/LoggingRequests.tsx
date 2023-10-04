@@ -19,7 +19,11 @@ async function getLoggingRequests() {
 }
 
 function LoggingRequests() {
-    const query = useQuery(['requests'], getLoggingRequests);
+    const query = useQuery(['requests'], getLoggingRequests, {
+        refetchInterval: 10000,
+        refetchIntervalInBackground: true,
+        refetchOnWindowFocus: true,
+    });
 
     if (query.isLoading) {
         return <span>Loading...</span>

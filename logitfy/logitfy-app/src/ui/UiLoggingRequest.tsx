@@ -24,6 +24,10 @@ const UiLoggingRequest: FC<Props> = ({ request }) => {
         badge_class = "badge-success"
     }
 
+    if (request.state === State.Running) {
+        badge_class = "badge-running"
+    }
+
     return (
         <>
             <div className='root_div'>
