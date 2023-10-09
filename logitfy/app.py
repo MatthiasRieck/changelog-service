@@ -8,33 +8,35 @@ from .model import LoggingRequest
 from .worker import Worker
 
 
-app = FastAPI()
+class App:
+    def __init__(self) -> None:
+        self.app = FastAPI()
 
-origins = [
-    "http://localhost:5173",
-]
+        origins = [
+            "http://localhost:5173",
+        ]
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+        self.app.add_middleware(
+            CORSMiddleware,
+            allow_origins=origins,
+            allow_credentials=True,
+            allow_methods=["*"],
+            allow_headers=["*"],
+        )
 
+        self.worker = Worker()
 
-worker = Worker()
+        self.app.get('/loggingRequests/')(self.get_logging_requests)
+        self.app.get('/repoSubmodules/{owner}/{repo}/')(self.get_repo_submodules)
+        self.app.post('/addNewRequest/')(self.add_new_request)
 
-@app.get('/loggingRequests/')
-def get_logging_requests() -> List[LoggingRequest]:
-    return worker.requests   
+    def get_logging_requests(self) -> List[LoggingRequest]:
+        return self.worker.requests   
 
-@app.get('/repoSubmodules/{owner}/{repo}/')
-def get_repo_submodules(owner: str, repo: str) -> List[str]:
-    return ["Hello", "World", owner, repo]
+    def get_repo_submodules(self, owner: str, repo: str) -> List[str]:
+        return ["Hello", "World", owner, repo]
 
-@app.post('/addNewRequest/')
-def add_new_request(request: LoggingRequest):
+    def add_new_request(self, request: LoggingRequest):
+        self.worker.append_request(request)
 
-    worker.append_request(request)
 
