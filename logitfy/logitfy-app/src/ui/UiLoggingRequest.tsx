@@ -1,4 +1,4 @@
-import { FC, MouseEventHandler, useState } from 'react'
+import { FC, useState } from 'react'
 import { LoggingRequest, State } from '../model'
 import './UiLoggingRequest.css'
 
@@ -34,7 +34,22 @@ const UiLoggingRequest: FC<Props> = ({ request }) => {
                 <div className='flex-item'>
                     {request.rootRepository} | <code>{request.startRef}</code> &rarr; <code>{request.endRef}</code>
                 </div>
-                <div className='error_message' onClick={handleErrorMessageClick}>{request.errorMessage}</div>
+                {
+                    request.jsonUri &&
+                    <div className='flex-item'>
+                        <a href={request.jsonUri}>JSON</a>
+                    </div>
+                }
+                {
+                    request.htmlUri &&
+                    <div className='flex-item'>
+                        <a href={request.htmlUri}>HTML</a>
+                    </div>
+                }
+                {
+                    request.errorMessage &&
+                    <div className='error_message' onClick={handleErrorMessageClick}>{request.errorMessage}</div>
+                }
                 <div className={`badge ${badge_class}`}>
                     {request.state}
                 </div>
