@@ -1,4 +1,4 @@
-import { FC, MouseEvent } from "react";
+import { FC } from "react";
 import './selected-submodule.css'
 
 interface Props {
@@ -9,7 +9,7 @@ interface Props {
 
 const Submodule: FC<Props> = ({ name, onClick }) => {
     return (
-        <span className="selected-submodule">{name} <button onClick={(e: MouseEvent) => onClick(name)}>
+        <span className="selected-submodule">{name} <button onClick={() => onClick(name)}>
             <svg width="16" height="16" viewBox="0 0 16 16">
                 <line x1="4" y1="4" x2="12" y2="12" stroke="rgba(0 0 0 / 0.5)" />
                 <line x1="12" y1="4" x2="4" y2="12" stroke="rgba(0 0 0 / 0.5)" />

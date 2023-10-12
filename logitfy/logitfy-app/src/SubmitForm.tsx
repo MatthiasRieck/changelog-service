@@ -1,13 +1,13 @@
 import React from 'react'
 import { useDeferredValue, useState } from "react";
-import { useQuery, QueryFunction, useQueryClient } from 'react-query';
+import { useQuery, QueryFunction, useQueryClient, QueryKey } from 'react-query';
 import * as Ariakit from "@ariakit/react";
 import { Combobox, ComboboxItem } from "./ui/combobox-multiple.js";
 import { matchSorter } from "match-sorter";
 import Submodule from './ui/selected-submodule.tsx';
 
 
-const getSubmoduleNames: QueryFunction<string[], [string]> = async ({ queryKey }) => {
+const getSubmoduleNames: QueryFunction<string[], QueryKey> = async ({ queryKey }) => {
     const rootRepo = queryKey[1];
 
     console.log(rootRepo)

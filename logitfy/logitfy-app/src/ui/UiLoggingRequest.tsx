@@ -1,4 +1,4 @@
-import { FC, MouseEventHandler, useState } from 'react'
+import { FC, useState } from 'react'
 import { LoggingRequest, State } from '../model'
 import './UiLoggingRequest.css'
 
