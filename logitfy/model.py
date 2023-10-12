@@ -8,11 +8,6 @@ import uuid
 
 from humps.camel import case
 
-
-def to_camel(string):
-    return case(string)
-
-
 class State(str, Enum):
     Waiting = "WAITING"
     Running = "RUNNING"
@@ -37,7 +32,7 @@ class LoggingRequest(BaseModel):
     stack_trace: Optional[str] = None
 
     class Config:
-        alias_generator = to_camel
+        alias_generator = case
         allow_population_by_field_name = True
         populate_by_name = True
 
