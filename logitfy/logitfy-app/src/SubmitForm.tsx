@@ -13,7 +13,7 @@ const getSubmoduleNames: QueryFunction<string[], QueryKey> = async ({ queryKey }
     console.log(rootRepo)
 
     try {
-        const res = await fetch(`http://127.0.0.1:8000/repoSubmodules/${rootRepo}`);
+        const res = await fetch(`/repoSubmodules/${rootRepo}`);
 
         if (!res.ok) {
             throw new Error(`HTTP error! status: ${res.status}`);
@@ -22,7 +22,7 @@ const getSubmoduleNames: QueryFunction<string[], QueryKey> = async ({ queryKey }
         return res.json();
     } catch (error) {
         console.error(error);
-        throw new Error("Failed to fetch logging requests");
+        throw new Error("Failed to fetch submodules");
     }
 };
 
@@ -126,7 +126,7 @@ function SubmitForm() {
             submoduleNames: values,
         })
         console.log(datastr)
-        fetch('http://127.0.0.1:8000/addNewRequest/',
+        fetch('/addNewRequest',
             {
                 method: 'POST',
                 headers: {

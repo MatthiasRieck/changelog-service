@@ -1,8 +1,13 @@
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
+
 from typing import List, Callable
+
+import os
 
 from gitaudit.github.instance import Github
 from gitaudit.git.change_log_entry import Issue
@@ -16,6 +21,9 @@ CommitUrlProvider = Callable[[str, str, str], str]
 IssuesProvider = Callable[[str, str], List[Issue]]
 
 
+ROOT_PATH = os.path.dirname(__file__)
+print(ROOT_PATH)
+
 class App:
     def __init__(
             self,
@@ -28,8 +36,16 @@ class App:
         ) -> None:
         self.app = FastAPI()
 
+        self.app.root_path = os.path.join(ROOT_PATH, "logitfy-app", "dist")
+        self.app.mount(
+            "/assets",
+            StaticFiles(directory=os.path.join(self.app.root_path, "assets")),
+            name="assets",
+        )
+        self.templates = Jinja2Templates(directory=self.app.root_path)
+
         origins = [
-            "http://localhost:5173",
+            "*",
         ]
 
         self.app.add_middleware(
@@ -49,9 +65,13 @@ class App:
             github=github,
         )
 
-        self.app.get('/loggingRequests/')(self.get_logging_requests)
-        self.app.get('/repoSubmodules/{owner}/{repo}/')(self.get_repo_submodules)
-        self.app.post('/addNewRequest/')(self.add_new_request)
+        self.app.get("/")(self.serve_react_app)
+
+        self.app.get('/loggingRequests')(self.get_logging_requests)
+        self.app.get('/repoSubmodules/{owner}/{repo}')(self.get_repo_submodules)
+        self.app.post('/addNewRequest')(self.add_new_request)
+
+        self.app.mount("/", StaticFiles(directory=self.app.root_path), name="ui")
 
     def get_logging_requests(self) -> List[LoggingRequest]:
         """Returns all requests"""
@@ -64,5 +84,8 @@ class App:
     def add_new_request(self, request: LoggingRequest):
         """Adds a new request to the queue"""
         self.worker.append_request(request)
+
+    def serve_react_app(self, request: Request):
+        return self.templates.TemplateResponse("index.html", {"request": request})
 
 
