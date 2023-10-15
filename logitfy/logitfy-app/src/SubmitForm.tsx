@@ -6,6 +6,7 @@ import { Combobox, ComboboxItem } from "./ui/combobox-multiple.js";
 import { matchSorter } from "match-sorter";
 import Submodule from './ui/selected-submodule.tsx';
 
+declare const SERVER_URL: string;
 
 const getSubmoduleNames: QueryFunction<string[], QueryKey> = async ({ queryKey }) => {
     const rootRepo = queryKey[1];
@@ -13,7 +14,7 @@ const getSubmoduleNames: QueryFunction<string[], QueryKey> = async ({ queryKey }
     console.log(rootRepo)
 
     try {
-        const res = await fetch(`http://127.0.0.1:8000/repoSubmodules/${rootRepo}`);
+        const res = await fetch(`${SERVER_URL}/repoSubmodules/${rootRepo}`);
 
         if (!res.ok) {
             throw new Error(`HTTP error! status: ${res.status}`);
@@ -22,7 +23,7 @@ const getSubmoduleNames: QueryFunction<string[], QueryKey> = async ({ queryKey }
         return res.json();
     } catch (error) {
         console.error(error);
-        throw new Error("Failed to fetch logging requests");
+        throw new Error("Failed to fetch submodules");
     }
 };
 
@@ -126,7 +127,7 @@ function SubmitForm() {
             submoduleNames: values,
         })
         console.log(datastr)
-        fetch('http://127.0.0.1:8000/addNewRequest/',
+        fetch(`${SERVER_URL}/addNewRequest`,
             {
                 method: 'POST',
                 headers: {
