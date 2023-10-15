@@ -3,9 +3,11 @@ import UiLoggingRequest from './ui/UiLoggingRequest.tsx';
 import { useQuery } from 'react-query';
 import { LoggingRequest } from './model.ts';
 
+declare const SERVER_URL: string;
+
 async function getLoggingRequests() {
     try {
-        const res = await fetch("http://127.0.0.1:8000/loggingRequests");
+        const res = await fetch(`${SERVER_URL}/loggingRequests`);
 
         if (!res.ok) {
             throw new Error(`HTTP error! status: ${res.status}`);

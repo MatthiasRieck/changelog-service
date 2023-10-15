@@ -1,9 +1,6 @@
 
-from fastapi import FastAPI, Request
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-
-from fastapi.staticfiles import StaticFiles
-from fastapi.templating import Jinja2Templates
 
 from typing import List, Callable
 
@@ -14,6 +11,7 @@ from gitaudit.git.change_log_entry import Issue
 
 from .model import LoggingRequest
 from .worker import Worker
+
 
 JsonUploadCallback = Callable[[LoggingRequest, str], str]
 HtmlUploadCallback = Callable[[LoggingRequest, str], str]
@@ -36,13 +34,8 @@ class App:
         ) -> None:
         self.app = FastAPI()
 
-        self.app.root_path = os.path.join(ROOT_PATH, "logitfy-app", "dist")
-        self.app.mount(
-            "/assets",
-            StaticFiles(directory=os.path.join(self.app.root_path, "assets")),
-            name="assets",
-        )
-        self.templates = Jinja2Templates(directory=self.app.root_path)
+        # self.app.root_path = os.path.join(ROOT_PATH, "logitfy-app", "dist")
+        # self.templates = Jinja2Templates(directory=self.app.root_path)
 
         origins = [
             "*",
@@ -65,13 +58,13 @@ class App:
             github=github,
         )
 
-        self.app.get("/")(self.serve_react_app)
+        # self.app.get("/")(self.serve_react_app)
 
         self.app.get('/loggingRequests')(self.get_logging_requests)
         self.app.get('/repoSubmodules/{owner}/{repo}')(self.get_repo_submodules)
         self.app.post('/addNewRequest')(self.add_new_request)
 
-        self.app.mount("/", StaticFiles(directory=self.app.root_path), name="ui")
+        # self.app.mount("/", StaticFiles(directory=self.app.root_path), name="ui")
 
     def get_logging_requests(self) -> List[LoggingRequest]:
         """Returns all requests"""
@@ -79,13 +72,14 @@ class App:
 
     def get_repo_submodules(self, owner: str, repo: str) -> List[str]:
         """Returns all submodules for a repository"""
-        return ["Hello", "World", owner, repo]
+        default_branch_ref = self.worker.github.get_repository(owner, repo, 'defaultBranchRef {name }').default_branch_ref.name
+        submodules = self.worker.github.get_submodules(owner, repo, default_branch_ref, 'gitUrl name')
+        submodule_names = list(map(lambda x: x.git_url.split('/')[-1], submodules))
+        return submodule_names
 
     def add_new_request(self, request: LoggingRequest):
         """Adds a new request to the queue"""
         self.worker.append_request(request)
 
-    def serve_react_app(self, request: Request):
-        return self.templates.TemplateResponse("index.html", {"request": request})
-
-
+    # def serve_react_app(self, request: Request):
+    #     return self.templates.TemplateResponse("index.html", {"request": request})
