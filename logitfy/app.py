@@ -74,7 +74,7 @@ class App:
         """Returns all submodules for a repository"""
         default_branch_ref = self.worker.github.get_repository(owner, repo, 'defaultBranchRef {name }').default_branch_ref.name
         submodules = self.worker.github.get_submodules(owner, repo, default_branch_ref, 'gitUrl name')
-        submodule_names = list(map(lambda x: x.git_url.split('/')[-1], submodules))
+        submodule_names = list(map(lambda x: x.name, submodules))
         return submodule_names
 
     def add_new_request(self, request: LoggingRequest):
