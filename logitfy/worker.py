@@ -90,8 +90,10 @@ class Worker:
                 f'end expression "{self.current_request.end_ref}" in '
                 f'repository "{self.current_request.root_repository}"'
             ))
+        
+        return start_commit.oid, end_commit.oid
 
-    def _execute_current_request(self):
+    def _execute_current_request(self, start_oid, end_oid):
         gitub_changelog = GithubChangeLog(
             self.github,
             self.tmp_git_checkout_location,
@@ -103,8 +105,8 @@ class Worker:
         changelog = gitub_changelog.get_change_log(
             owner=owner,
             repo=repo,
-            start_ref=self.current_request.start_ref,
-            end_ref=self.current_request.end_ref,
+            start_ref=start_oid,
+            end_ref=end_oid,
             pr_querydata=(
                 "title id number url mergeCommit { oid } "
                 "repository { nameWithOwner owner { login } name }"
@@ -142,8 +144,8 @@ class Worker:
             try:
                 self.current_request.state = State.Running
 
-                self._validate_current_request()
-                self._execute_current_request()
+                start_oid, end_oid = self._validate_current_request()
+                self._execute_current_request(start_oid, end_oid)
 
                 self.current_request.state = State.Finished
             except Exception as e:
