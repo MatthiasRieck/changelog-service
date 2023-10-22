@@ -1,3 +1,3 @@
 fastapi
-gitaudit>=0.15.2
+gitaudit>=0.15.4
 humps
