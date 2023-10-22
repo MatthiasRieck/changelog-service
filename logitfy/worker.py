@@ -23,6 +23,7 @@ class Worker:
     def __init__(
         self,
         tmp_git_checkout_location: str,
+        tmp_github_cache_location: str,
         json_upload_callback: Callable[[str], str],
         html_upload_callback: Callable[[str], str],
         commit_url_provider: Callable[[str, str, str], str],
@@ -30,6 +31,7 @@ class Worker:
         github: Github,
     ) -> None:
         self.tmp_git_checkout_location = tmp_git_checkout_location
+        self.tmp_github_cache_location = tmp_github_cache_location
         self.json_upload_callback = json_upload_callback
         self.html_upload_callback = html_upload_callback
         self.commit_url_provider = commit_url_provider
@@ -97,7 +99,7 @@ class Worker:
         gitub_changelog = GithubChangeLog(
             self.github,
             self.tmp_git_checkout_location,
-            '.'
+            self.tmp_github_cache_location,
         )
 
         owner, repo = self.current_request.root_repository.split('/')
