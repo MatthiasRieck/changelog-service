@@ -26,6 +26,7 @@ class App:
     def __init__(
             self,
             tmp_git_checkout_location: str,
+            tmp_github_cache_location: str,
             json_upload_callback: JsonUploadCallback,
             html_upload_callback: HtmlUploadCallback,
             commit_url_provider: CommitUrlProvider,
@@ -51,6 +52,7 @@ class App:
 
         self.worker = Worker(
             tmp_git_checkout_location=tmp_git_checkout_location,
+            tmp_github_cache_location=tmp_github_cache_location,
             json_upload_callback=json_upload_callback,
             html_upload_callback=html_upload_callback,
             commit_url_provider=commit_url_provider,
