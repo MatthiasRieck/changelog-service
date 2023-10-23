@@ -119,7 +119,7 @@ function SubmitForm() {
     };
 
 
-    const handleSubmitClick = () => {
+    const handleSubmitClick = async () => {
         const datastr = JSON.stringify({
             rootRepository: rootRepo,
             startRef: startRef,
@@ -127,7 +127,7 @@ function SubmitForm() {
             submoduleNames: values,
         })
         console.log(datastr)
-        fetch(`${SERVER_URL}/addNewRequest`,
+        await fetch(`${SERVER_URL}/addNewRequest`,
             {
                 method: 'POST',
                 headers: {
