@@ -4,6 +4,7 @@ import traceback
 from threading import Thread
 
 from typing import List, Callable
+from datetime import datetime
 
 from gitaudit.github.instance import Github
 
@@ -14,8 +15,13 @@ from gitaudit.render.change_log import render_change_log_to_text
 
 from .model import State, LoggingRequest
 
+
+COMMIT_QUERY_DATA = "oid committedDate"
+
+
 class LoggingRequestError(Exception):
     """Exception for logging requests"""""
+
 
 class Worker:
     """Worker for processing logging requests"""
@@ -56,17 +62,32 @@ class Worker:
         arr.extend(self.queue_requests)
 
         return arr
+    
+    def _get_commit(self, owner, repo, ref):
+        if '@' in ref:
+            branch_name, datetime_text = ref.split('@')
+            date_time = datetime.fromisoformat(datetime_text)
+            return self.github.get_first_commit_before_date(
+                owner=owner,
+                repo=repo,
+                ref=branch_name,
+                commit_date_time=date_time,
+                querydata=COMMIT_QUERY_DATA,
+            )
+
+        return self.github.get_commit_for_expression(
+            owner=owner,
+            repo=repo,
+            expression=ref,
+            querydata=COMMIT_QUERY_DATA,
+        )
+
 
     def _validate_current_request(self):
         owner, repo = self.current_request.root_repository.split('/')
 
         try:
-            start_commit = self.github.get_commit_for_expression(
-                owner=owner,
-                repo=repo,
-                expression=self.current_request.start_ref,
-                querydata="oid committedDate"
-            )
+            start_commit = self._get_commit(owner, repo, self.current_request.start_ref)
         except Exception as esc:
             raise LoggingRequestError((
                 f'Start expression "{self.current_request.start_ref}" does not exist in '
@@ -74,15 +95,10 @@ class Worker:
             )) from esc
 
         try:
-            end_commit = self.github.get_commit_for_expression(
-                owner=owner,
-                repo=repo,
-                expression=self.current_request.end_ref,
-                querydata="oid committedDate"
-            )
+            end_commit = self._get_commit(owner, repo, self.current_request.end_ref)
         except Exception as esc:
             raise LoggingRequestError((
-                f'End expression "{self.current_request.start_ref}" does not exist in '
+                f'End expression "{self.current_request.end_ref}" does not exist in '
                 f'repository "{self.current_request.root_repository}"'
             )) from esc
 

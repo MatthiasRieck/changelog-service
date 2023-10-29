@@ -145,9 +145,26 @@ function SubmitForm() {
         <>
             <h1>LOGITFY - Changelog as a Service</h1>
             <h2>Select the root repository</h2>
+            <p>
+                Enter the root git repository using the owner, org and the repo name
+                combined by a slash. In case the repo has submodules click on the button on
+                the right to get the list of submodules.
+            </p>
             {uiSelectRootRepo}
             {uiSubmodules()}
             <h2> Select start (sha, tag) and end ref (sha, tag, branch)</h2>
+            <p>
+                Enter the start and end point of the changelog. The start point can be a sha, tag, or a branch time reference.
+                The end point can also be a branch name.
+            </p>
+            <p>
+                A branch time reference is written by the branch name and a datetime in iso format separated by an '@'.
+                Logitfy will find the commit that was the head of the branch at the specified time.
+            </p>
+            <ul>
+                <li>main@2023-08-31</li>
+                <li>main@2023-08-31T14:35</li>
+            </ul>
             <div className='selection_row'>
                 <input className='input' placeholder='start-ref' onChange={onStartRefChange}></input>
                 &rarr;
