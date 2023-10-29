@@ -31,21 +31,26 @@ const UiLoggingRequest: FC<Props> = ({ request }) => {
     return (
         <>
             <div className='root_div'>
-                <div className='flex-item'>
+                <div>
                     {request.rootRepository} | <code>{request.startRef}</code> &rarr; <code>{request.endRef}</code>
                 </div>
-                {
-                    request.jsonUri &&
-                    <div className='flex-item'>
-                        <a href={request.jsonUri}>JSON</a>
-                    </div>
-                }
-                {
-                    request.htmlUri &&
-                    <div className='flex-item'>
-                        <a href={request.htmlUri}>HTML</a>
-                    </div>
-                }
+                <div className='auto-margin-left'>
+                    {
+                        request.jsonUri &&
+                        <>
+                            <span>
+                                <a href={request.jsonUri}>JSON</a>
+                            </span>
+                            {" / "}
+                        </>
+                    }
+                    {
+                        request.htmlUri &&
+                        <span>
+                            <a href={request.htmlUri}>HTML</a>
+                        </span>
+                    }
+                </div>
                 {
                     request.errorMessage &&
                     <div className='error_message' onClick={handleErrorMessageClick}>{request.errorMessage}</div>
