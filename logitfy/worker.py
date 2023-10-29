@@ -108,7 +108,7 @@ class Worker:
                 f'end expression "{self.current_request.end_ref}" in '
                 f'repository "{self.current_request.root_repository}"'
             ))
-        
+
         return start_commit.oid, end_commit.oid
 
     def _execute_current_request(self, start_oid, end_oid):
@@ -135,6 +135,7 @@ class Worker:
             commit_url_provider=self.commit_url_provider,
             issues_provider=self.issues_provider,
             no_submodule_entries_on_first_commit=True,
+            assert_start_ref_in_first_parent_log=True,
         )
 
         # Use Callback to upload changelog
