@@ -16,7 +16,6 @@ from gitaudit.render.change_log import render_change_log_to_text
 from .model import State, LoggingRequest
 
 
-COMMIT_QUERY_DATA = "oid committedDate"
 
 
 class LoggingRequestError(Exception):
@@ -62,54 +61,6 @@ class Worker:
         arr.extend(self.queue_requests)
 
         return arr
-    
-    def _get_commit(self, owner, repo, ref):
-        if '@' in ref:
-            branch_name, datetime_text = ref.split('@')
-            date_time = datetime.fromisoformat(datetime_text)
-            return self.github.get_first_commit_before_date(
-                owner=owner,
-                repo=repo,
-                ref=branch_name,
-                commit_date_time=date_time,
-                querydata=COMMIT_QUERY_DATA,
-            )
-
-        return self.github.get_commit_for_expression(
-            owner=owner,
-            repo=repo,
-            expression=ref,
-            querydata=COMMIT_QUERY_DATA,
-        )
-
-
-    def _validate_current_request(self):
-        owner, repo = self.current_request.root_repository.split('/')
-
-        try:
-            start_commit = self._get_commit(owner, repo, self.current_request.start_ref)
-        except Exception as esc:
-            raise LoggingRequestError((
-                f'Start expression "{self.current_request.start_ref}" does not exist in '
-                f'repository "{self.current_request.root_repository}"'
-            )) from esc
-
-        try:
-            end_commit = self._get_commit(owner, repo, self.current_request.end_ref)
-        except Exception as esc:
-            raise LoggingRequestError((
-                f'End expression "{self.current_request.end_ref}" does not exist in '
-                f'repository "{self.current_request.root_repository}"'
-            )) from esc
-
-        if start_commit.committed_date > end_commit.committed_date:
-            raise LoggingRequestError((
-                f'Start expression "{self.current_request.start_ref}" is newer than '
-                f'end expression "{self.current_request.end_ref}" in '
-                f'repository "{self.current_request.root_repository}"'
-            ))
-
-        return start_commit.oid, end_commit.oid
 
     def _execute_current_request(self, start_oid, end_oid):
         gitub_changelog = GithubChangeLog(
@@ -120,7 +71,7 @@ class Worker:
 
         owner, repo = self.current_request.root_repository.split('/')
 
-        changelog = gitub_changelog.get_change_log(
+        changelog = gitub_changelog.get_preprocessed_change_log(
             owner=owner,
             repo=repo,
             start_ref=start_oid,
@@ -135,7 +86,6 @@ class Worker:
             commit_url_provider=self.commit_url_provider,
             issues_provider=self.issues_provider,
             no_submodule_entries_on_first_commit=True,
-            assert_start_ref_in_first_parent_log=True,
         )
 
         # Use Callback to upload changelog
@@ -163,8 +113,10 @@ class Worker:
             try:
                 self.current_request.state = State.Running
 
-                start_oid, end_oid = self._validate_current_request()
-                self._execute_current_request(start_oid, end_oid)
+                self._execute_current_request(
+                    self.current_request.start_ref,
+                    self.current_request.end_ref,
+                )
 
                 self.current_request.state = State.Finished
             except Exception as e:
