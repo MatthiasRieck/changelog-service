@@ -78,7 +78,8 @@ class Worker:
             end_ref=end_oid,
             pr_querydata=(
                 "title id number url mergeCommit { oid } "
-                "repository { nameWithOwner owner { login } name }"
+                "repository { nameWithOwner owner { login } name } "
+                "labels { name }"
             ),
             no_patch_if_no_submodules=True,
             follow_submodules=True,
