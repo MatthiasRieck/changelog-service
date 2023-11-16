@@ -11,7 +11,7 @@ from gitaudit.github.instance import Github
 
 from gitaudit.analysis.changelog.changelog import GithubChangeLog
 from gitaudit.branch.serialization import log_to_json
-from gitaudit.render.change_log import render_change_log_to_text
+from gitaudit.render.change_log import render_change_log_to_text, ChangeLogRenderConfig
 
 from .model import State, LoggingRequest
 
@@ -99,6 +99,7 @@ class Worker:
         if self.html_upload_callback:
             changelog_html = render_change_log_to_text(
                 changelog,
+                render_config=ChangeLogRenderConfig(show_integration_request_labels=True),
                 root_repo_name=self.current_request.root_repository,
             )
             self.current_request.html_uri = self.html_upload_callback(
