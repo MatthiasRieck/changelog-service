@@ -79,7 +79,7 @@ class Worker:
             pr_querydata=(
                 "title id number url mergeCommit { oid } "
                 "repository { nameWithOwner owner { login } name } "
-                "labels { name }"
+                "labels { nodes { name } }"
             ),
             no_patch_if_no_submodules=True,
             follow_submodules=True,
