@@ -116,8 +116,8 @@ class Worker:
                 self.current_request.state = State.Running
 
                 self._execute_current_request(
-                    self.current_request.start_ref,
-                    self.current_request.end_ref,
+                    self.current_request.start_ref.strip(),
+                    self.current_request.end_ref.strip(),
                 )
 
                 self.current_request.state = State.Finished
